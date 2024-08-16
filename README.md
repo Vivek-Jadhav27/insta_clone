@@ -33,10 +33,10 @@ This project is an Instagram clone developed using Flutter, Firebase, and BLoC f
 ## ScreenShots
 
 ### Login Screen
-![Login Screen](assets/screenshots/login_page.jpg){ width: 200px; }
+![Login Screen](assets/screenshots/login_page.jpg  | width=100)
 
 ### Signup Screen
-![Signup Screen](assets/screenshots/signup_page.jpg)
+![Signup Screen](assets/screenshots/signup_page.jpg   | width=100)
 
 ### Splash Screen
-![Splash Screen](assets/screenshots/splash_screen.jpg)
+![Splash Screen](assets/screenshots/splash_screen.jpg  | width=100)
