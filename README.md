@@ -29,3 +29,14 @@ This project is an Instagram clone developed using Flutter, Firebase, and BLoC f
    ```sh
    git clone https://github.com/your-repository/instagram-clone.git
    cd instagram-clone
+
+## ScreenShots
+
+### Login Screen
+![Login Screen](assets/screenshots/login_page.jpg)
+
+### Signup Screen
+![Signup Screen](assets/screenshots/signup_page.jpg)
+
+### Splash Screen
+![Splash Screen](assets/screenshots/splash_screen.jpg)
