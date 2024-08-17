@@ -12,15 +12,20 @@ bool validateSignupForm({
   required TextEditingController usernameController,
   required TextEditingController emailController,
   required TextEditingController passwordController,
-  required TextEditingController confirmPasswordController,
+  required TextEditingController fullNameController,
 }) {
   final username = usernameController.text.trim();
   final email = emailController.text.trim();
   final password = passwordController.text;
-  final confirmPassword = confirmPasswordController.text;
+  final fullname = fullNameController.text;
 
   if (username.isEmpty) {
     showValidationErrors(context, 'Username cannot be empty');
+    return false;
+  }
+
+  if (fullname.isEmpty) {
+    showValidationErrors(context, 'Fullname cannot be empty');
     return false;
   }
 
@@ -36,11 +41,6 @@ bool validateSignupForm({
       !passwordRegex.hasMatch(password)) {
     showValidationErrors(context,
         'Password must be at least 6 characters long and contain both letters and numbers');
-    return false;
-  }
-
-  if (confirmPassword != password) {
-    showValidationErrors(context, 'Passwords do not match');
     return false;
   }
 

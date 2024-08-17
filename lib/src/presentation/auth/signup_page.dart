@@ -5,10 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:instagram/src/bloc/signup/signup_bloc.dart';
 import 'package:instagram/src/bloc/signup/signup_event.dart';
 import 'package:instagram/src/bloc/signup/signup_state.dart';
-import 'package:instagram/src/presentation/home_page.dart';
-import '../config/router/app_route.dart';
-import '../widgets/form_fields.dart'; // Import the form fields file
-import '../utils/validation.dart'; // Import the validation file
+import '../../config/router/app_route.dart';
+import '../../widgets/form_fields.dart'; // Import the form fields file
+import '../../utils/validation.dart'; // Import the validation file
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -23,37 +22,31 @@ class _SignupPageState extends State<SignupPage> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _fullNameController = TextEditingController(); // Updated
 
   final _usernameFocusNode = FocusNode();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
-  final _confirmPasswordFocusNode = FocusNode();
+  final _fullNameFocusNode = FocusNode(); // Updated
 
   bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
 
   @override
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _fullNameController.dispose(); // Updated
     _usernameFocusNode.dispose();
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
-    _confirmPasswordFocusNode.dispose();
+    _fullNameFocusNode.dispose(); // Updated
     super.dispose();
   }
 
   void _togglePasswordVisibility() {
     setState(() {
       _isPasswordVisible = !_isPasswordVisible;
-    });
-  }
-  void _toggleConfirmPasswordVisibility() {
-    setState(() {
-      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
     });
   }
 
@@ -68,10 +61,7 @@ class _SignupPageState extends State<SignupPage> {
         body: BlocConsumer<SignupBloc, SignupState>(
           listener: (context, state) {
             if (state is SignupSuccess) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const HomePage()),
-              );
+              Navigator.pushNamed(context, AppRoutes.main);
             } else if (state is SignupError) {
               showValidationErrors(context, 'Signup failed: ${state.error}');
             }
@@ -100,7 +90,8 @@ class _SignupPageState extends State<SignupPage> {
                             ),
                             decoration: const BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/images/instagram.png'),
+                                image:
+                                    AssetImage('assets/images/instagram.png'),
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -126,6 +117,13 @@ class _SignupPageState extends State<SignupPage> {
                                 SizedBox(height: screenHeight * 0.02),
                                 buildTextFormField(
                                   context: context,
+                                  controller: _fullNameController,
+                                  focusNode: _fullNameFocusNode,
+                                  hintText: 'Full Name', // Updated
+                                ),
+                                SizedBox(height: screenHeight * 0.02),
+                                buildTextFormField(
+                                  context: context,
                                   controller: _emailController,
                                   focusNode: _emailFocusNode,
                                   hintText: 'Email',
@@ -141,16 +139,6 @@ class _SignupPageState extends State<SignupPage> {
                                   toggleVisibility: _togglePasswordVisibility,
                                 ),
                                 SizedBox(height: screenHeight * 0.02),
-                                buildTextFormField(
-                                  context: context,
-                                  controller: _confirmPasswordController,
-                                  focusNode: _confirmPasswordFocusNode,
-                                  hintText: 'Confirm Password',
-                                  isPassword: true,
-                                  isVisible: _isConfirmPasswordVisible,
-                                  toggleVisibility: _toggleConfirmPasswordVisibility,
-                                ),
-                                SizedBox(height: screenHeight * 0.02),
                                 GestureDetector(
                                   onTap: () {
                                     if (validateSignupForm(
@@ -158,13 +146,17 @@ class _SignupPageState extends State<SignupPage> {
                                       usernameController: _usernameController,
                                       emailController: _emailController,
                                       passwordController: _passwordController,
-                                      confirmPasswordController: _confirmPasswordController,
+                                      fullNameController:
+                                          _fullNameController, // Updated
                                     )) {
                                       BlocProvider.of<SignupBloc>(context).add(
                                         SignupReqEvent(
-                                          username: _usernameController.text.trim(),
+                                          username:
+                                              _usernameController.text.trim(),
                                           email: _emailController.text.trim(),
                                           password: _passwordController.text,
+                                          fullName: _fullNameController.text
+                                              .trim(), // Updated
                                         ),
                                       );
                                     }
@@ -174,7 +166,8 @@ class _SignupPageState extends State<SignupPage> {
                                     height: screenHeight * 0.06,
                                     width: double.infinity,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                                      borderRadius: BorderRadius.circular(
+                                          screenWidth * 0.02),
                                       color: Colors.blue,
                                     ),
                                     child: Text(
@@ -211,7 +204,9 @@ class _SignupPageState extends State<SignupPage> {
                                   color: Colors.blue,
                                 ),
                                 recognizer: TapGestureRecognizer()
-                                  ..onTap = () => Navigator.pushReplacementNamed(context, AppRoutes.login),
+                                  ..onTap = () =>
+                                      Navigator.pushReplacementNamed(
+                                          context, AppRoutes.login),
                               ),
                             ],
                           ),

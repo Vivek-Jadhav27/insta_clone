@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:widget_and_text_animator/widget_and_text_animator.dart';
-
-import '../config/router/app_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../config/router/app_route.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,6 +12,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   void initState() {
     super.initState();
@@ -20,10 +22,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _navigateToLogin() async {
     await Future.delayed(const Duration(seconds: 3), () {});
-    Navigator.pushNamed(
-      context,
-      AppRoutes.login,
-    );
+    if (_auth.currentUser != null) {
+      Navigator.pushNamed(context, AppRoutes.main);
+    } else {
+      Navigator.pushNamed(
+        context,
+        AppRoutes.login,
+      );
+    }
   }
 
   @override

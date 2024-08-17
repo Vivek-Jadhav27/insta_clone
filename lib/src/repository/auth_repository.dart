@@ -7,7 +7,7 @@ class AuthRepository {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    Future<User?> signup(String username, String email, String password) async {
+  Future<User?> signup(String username, String email, String password , String fullname) async {
     try {
       if (await isUsernameTaken(username)) {
         throw Exception('Username is already taken');
@@ -22,8 +22,10 @@ class AuthRepository {
       if (user != null) {
         // Add user data to Firestore
         await firestore.collection('users').doc(user.uid).set({
+          'uid': user.uid,
           'username': username,
           'email': email,
+          'fullname': fullname,
           'profileImageUrl': '',
           'bio': '',
           'followers': 0,
@@ -77,7 +79,7 @@ class AuthRepository {
       throw Exception('Error during login with username: $e');
     }
   }
-  
+
   Future<UserModel?> getUserData(String uid) async {
     try {
       final docSnapshot = await firestore.collection('users').doc(uid).get();
@@ -102,5 +104,4 @@ class AuthRepository {
       throw Exception('Error checking username availability: $e');
     }
   }
-
 }

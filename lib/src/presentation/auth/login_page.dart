@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:instagram/src/bloc/login/login_event.dart';
 import 'package:instagram/src/bloc/login/login_state.dart';
-import '../utils/validation.dart';
-import '../widgets/form_fields.dart';
-import '../bloc/login/login_bloc.dart';
-import '../config/router/app_route.dart';
+import '../../utils/validation.dart';
+import '../../widgets/form_fields.dart';
+import '../../bloc/login/login_bloc.dart';
+import '../../config/router/app_route.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

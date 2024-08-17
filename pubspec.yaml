@@ -45,6 +45,8 @@ dependencies:
   firebase_auth: ^4.16.0
   cloud_firestore: ^4.14.0
   widget_and_text_animator: ^1.1.5
+  image_picker: ^1.1.2
+  firebase_storage: ^11.6.0
 
 dev_dependencies:
   flutter_test:
@@ -59,7 +61,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/instagram.png"
+  image_path: "assets/images/applogo.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
