@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import '../../utils/permission_service.dart';
 import 'activity_page.dart';
 import 'add_page.dart';
 import 'explore_page.dart';
@@ -14,6 +16,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
+  final PermissionsService _permissionsService = PermissionsService();
 
   final List<Widget> _pages = [
     const HomePage(),
@@ -30,10 +33,33 @@ class _MainPageState extends State<MainPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _requestAllPermissions();
+  }
+
+  Future<void> _requestAllPermissions() async {
+    final statuses = await _permissionsService.requestAllPermissions();
+
+    bool cameraGranted =
+        statuses[Permission.camera] == PermissionStatus.granted;
+    bool storageGranted =
+        statuses[Permission.storage] == PermissionStatus.granted;
+
+    String message = 'Permissions status:\n';
+    message += 'Camera: ${cameraGranted ? "Granted" : "Denied"}\n';
+    message += 'Storage: ${storageGranted ? "Granted" : "Denied"}';
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-     body: _pages[_currentIndex],
+      body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         backgroundColor: Colors.white,

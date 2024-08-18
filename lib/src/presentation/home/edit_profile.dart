@@ -9,6 +9,8 @@ import 'package:instagram/src/bloc/profile/profile_bloc.dart';
 import 'package:instagram/src/bloc/profile/profile_event.dart';
 import 'package:instagram/src/bloc/profile/profile_state.dart';
 import 'package:instagram/src/config/models/user_model.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 class EditProfile extends StatefulWidget {
   final String uid;
@@ -59,6 +61,27 @@ class _EditProfileState extends State<EditProfile> {
     _bioFocusNode.dispose();
 
     super.dispose();
+  }
+
+  Future<void> _requestPermission() async {
+    PermissionStatus status = await Permission.camera.status;
+
+    if (status.isGranted) {
+      _pickImage();
+    }
+    else {
+        PermissionStatus status = await Permission.camera.request();
+        if(status.isGranted){
+          _pickImage();
+        }
+        else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Permission request denied'),
+            ),
+          );
+        }
+    }
   }
 
   Future<void> _pickImage() async {
@@ -229,7 +252,7 @@ class _EditProfileState extends State<EditProfile> {
                   children: [
                     Center(
                       child: GestureDetector(
-                        onTap: _pickImage,
+                        onTap: _requestPermission,
                         child: Container(
                           width: screenWidth * 0.30,
                           height: screenWidth * 0.30,

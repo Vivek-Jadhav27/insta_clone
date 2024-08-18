@@ -7,6 +7,7 @@ class PostModel {
   final List<dynamic> imageUrls;
   final List<dynamic> likeslist;
   final List<dynamic> commentslist;
+  final List<dynamic> mentionlist;
   final int likes;
   final int comments;
   final int shares;
@@ -20,6 +21,7 @@ class PostModel {
     required this.timestamp,
     this.likeslist = const [],
     this.commentslist = const [],
+    this.mentionlist = const [],
     this.likes = 0,
     this.comments = 0,
     this.shares = 0,
@@ -35,6 +37,7 @@ class PostModel {
       'imageUrls': imageUrls,
       'likeslist': likeslist,
       'commentslist': commentslist,
+      'mentionlist': mentionlist,
       'likes': likes,
       'comments': comments,
       'shares': shares,
@@ -51,6 +54,7 @@ class PostModel {
       timestamp: json['timestamp'] ?? '',
       likeslist: json['likeslist'] ?? [],
       commentslist: json['commentslist'] ?? [],
+      mentionlist: json['mentionlist'] ?? [],
       likes: json['likes'] ?? 0,
       comments: json['comments'] ?? 0,
       shares: json['shares'] ?? 0,

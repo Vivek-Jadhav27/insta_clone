@@ -47,7 +47,8 @@ dependencies:
   widget_and_text_animator: ^1.1.5
   image_picker: ^1.1.2
   firebase_storage: ^11.6.0
-
+  permission_handler: ^11.3.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         body: BlocConsumer<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              Navigator.pushNamed(context, AppRoutes.home);
+              Navigator.pushNamed(context, AppRoutes.main);
             }
             if (state is LoginError) {
               ScaffoldMessenger.of(context).showSnackBar(
