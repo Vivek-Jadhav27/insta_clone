@@ -96,11 +96,6 @@ class _ProfilePageState extends State<ProfilePage>
             );
           } else if (state is ProfileUpdated) {
             context.read<ProfileBloc>().add(ProfileFetchingEvent(uid: userId));
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   const SnackBar(
-            //     content: Text('Profile updated successfully Profiles!'),
-            //   ),
-            // );
           }
         },
         builder: (context, state) {

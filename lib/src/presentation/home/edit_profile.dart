@@ -70,8 +70,8 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
-  Future<void> _uploadImage() async {
-    if (_imageFile == null) return;
+  Future<String?> _uploadImage() async {
+    if (_imageFile == null) return null;
 
     final storageRef = FirebaseStorage.instance
         .ref()
@@ -79,17 +79,64 @@ class _EditProfileState extends State<EditProfile> {
         .child('${widget.uid} ${DateTime.now()}.jpg');
     try {
       await storageRef.putFile(_imageFile!);
-      final downloadURL = await storageRef.getDownloadURL();
-      _updateProfileImageUrl(downloadURL);
+      return await storageRef.getDownloadURL();
     } catch (e) {
       print('Error uploading image: $e');
+      return null;
     }
   }
 
-  void _updateProfileImageUrl(String url) {
-    final updatedUserModel = userModel.copyWith(profileImageUrl: url);
-    BlocProvider.of<ProfileBloc>(context)
-        .add(ProfileUpdatingEvent(userModel: updatedUserModel));
+  void _updateProfile(BuildContext context) async {
+    FocusScope.of(context).unfocus(); // Dismiss the keyboard
+
+    final username = _usernameController.text.trim();
+    final fullname = _fullnameController.text.trim();
+    final bio = _bioController.text.trim();
+
+    if (username.isEmpty || fullname.isEmpty || bio.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('All fields are required'),
+        ),
+      );
+      return;
+    }
+
+    // Upload image if available
+    String? profileImageUrl = await _uploadImage();
+
+    // If no new image was selected, retain the existing URL
+    profileImageUrl ??= userModel.profileImageUrl;
+
+    final updatedUserModel = userModel.copyWith(
+      username: username,
+      fullname: fullname,
+      bio: bio,
+      profileImageUrl: profileImageUrl,
+    );
+
+    BlocProvider.of<ProfileBloc>(context).add(
+      ProfileUpdatingEvent(userModel: updatedUserModel),
+    );
+  }
+
+  DecorationImage _buildProfileImage(String? profileImageUrl) {
+    if (_imageFile != null) {
+      return DecorationImage(
+        image: FileImage(_imageFile!),
+        fit: BoxFit.fill,
+      );
+    } else if (profileImageUrl != null && profileImageUrl.isNotEmpty) {
+      return DecorationImage(
+        image: NetworkImage(profileImageUrl),
+        fit: BoxFit.fill,
+      );
+    } else {
+      return const DecorationImage(
+        image: AssetImage('assets/images/user.png'),
+        fit: BoxFit.fill,
+      );
+    }
   }
 
   @override
@@ -99,9 +146,7 @@ class _EditProfileState extends State<EditProfile> {
 
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
-        if (state is ProfileUpdating) {
-          // Optional: Show a loading indicator if needed
-        } else if (state is ProfileUpdated) {
+        if (state is ProfileUpdated) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Profile updated successfully!'),
@@ -117,7 +162,7 @@ class _EditProfileState extends State<EditProfile> {
         }
       },
       builder: (context, state) {
-        if (state is ProfileLoading) {
+        if (state is ProfileUpdating || state is ProfileLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is ProfileLoaded) {
           if (!_isInitialized) {
@@ -193,15 +238,8 @@ class _EditProfileState extends State<EditProfile> {
                             bottom: screenHeight * 0.01,
                           ),
                           decoration: BoxDecoration(
-                            image: _imageFile != null
-                                ? DecorationImage(
-                                    image: FileImage(_imageFile!),
-                                    fit: BoxFit.fill,
-                                  )
-                                : const DecorationImage(
-                                    image: AssetImage('assets/images/user.png'),
-                                    fit: BoxFit.fill,
-                                  ),
+                            image:
+                                _buildProfileImage(userModel.profileImageUrl),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -279,6 +317,7 @@ class _EditProfileState extends State<EditProfile> {
                                     keyboardType: TextInputType.name,
                                     decoration: InputDecoration(
                                       hintText: 'Fullname',
+                                      contentPadding: EdgeInsets.zero,
                                     ),
                                     style: GoogleFonts.poppins(fontSize: 16),
                                   ),
@@ -288,9 +327,9 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           Padding(
                             padding:
-                                EdgeInsets.only(bottom: screenHeight * 0.01),
+                                EdgeInsets.only(bottom: screenHeight * 0.02),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Expanded(
                                   flex: 1,
@@ -305,14 +344,15 @@ class _EditProfileState extends State<EditProfile> {
                                 Expanded(
                                   flex: 2,
                                   child: TextField(
-                                    minLines: 2,
-                                    maxLines: 5,
-                                    maxLength: 90,
                                     controller: _bioController,
                                     focusNode: _bioFocusNode,
+                                    maxLines: 4,
+                                    minLines: 2,
+                                    maxLength: 90,
                                     keyboardType: TextInputType.multiline,
                                     decoration: InputDecoration(
                                       hintText: 'Bio',
+                                      contentPadding: EdgeInsets.zero,
                                     ),
                                     style: GoogleFonts.poppins(fontSize: 16),
                                   ),
@@ -328,39 +368,10 @@ class _EditProfileState extends State<EditProfile> {
               ),
             ),
           );
+        } else {
+          return const Center(child: Text('Something went wrong!'));
         }
-
-        return Container();
       },
-    );
-  }
-
-  void _updateProfile(BuildContext context) {
-    FocusScope.of(context).unfocus(); // Dismiss the keyboard
-
-    final username = _usernameController.text.trim();
-    final fullname = _fullnameController.text.trim();
-    final bio = _bioController.text.trim();
-
-    if (username.isEmpty || fullname.isEmpty || bio.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('All fields are required'),
-        ),
-      );
-      return;
-    }
-
-    final updatedUserModel = userModel.copyWith(
-      username: username,
-      fullname: fullname,
-      bio: bio,
-    );
-
-    _uploadImage();
-
-    BlocProvider.of<ProfileBloc>(context).add(
-      ProfileUpdatingEvent(userModel: updatedUserModel),
     );
   }
 }
