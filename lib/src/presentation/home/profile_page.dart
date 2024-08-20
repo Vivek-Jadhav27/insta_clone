@@ -8,6 +8,7 @@ import 'package:instagram/src/bloc/profile/profile_state.dart';
 import 'package:instagram/src/presentation/home/edit_profile.dart';
 import 'package:instagram/src/widgets/stat_item.dart';
 import 'package:instagram/src/widgets/story_view.dart';
+import '../../config/models/post_model.dart';
 import '../../widgets/posts_grid_view.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -27,7 +28,6 @@ class _ProfilePageState extends State<ProfilePage>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     userId = FirebaseAuth.instance.currentUser!.uid;
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProfileBloc>().add(ProfileFetchingEvent(uid: userId));
     });
@@ -103,6 +103,7 @@ class _ProfilePageState extends State<ProfilePage>
             return const Center(child: CircularProgressIndicator());
           } else if (state is ProfileLoaded) {
             final userModel = state.userModel;
+            final userPosts = state.userPosts;
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,11 +194,13 @@ class _ProfilePageState extends State<ProfilePage>
                     child: GestureDetector(
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditProfile(
-                                      uid: userId,
-                                    )));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfile(
+                              uid: userId,
+                            ),
+                          ),
+                        );
                       },
                       child: Container(
                         width: screenWidth,
@@ -258,8 +261,32 @@ class _ProfilePageState extends State<ProfilePage>
                     child: TabBarView(
                       controller: _tabController,
                       children: [
-                        PostsGridView(itemCount: userModel.posts),
-                        PostsGridView(itemCount: 0),
+                        FutureBuilder<List<PostModel>>(
+                          future: userPosts,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(
+                                      'Error: ${snapshot.error},style: TextStyle(color: Colors.black),'));
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Center(
+                                  child: Text(
+                                'No posts available.',
+                                style: TextStyle(color: Colors.black),
+                              ));
+                            } else {
+                              return PostsGridView(posts: snapshot.data!);
+                            }
+                          },
+                        ),
+                        PostsGridView(
+                          posts: [],
+                        ),
                       ],
                     ),
                   ),

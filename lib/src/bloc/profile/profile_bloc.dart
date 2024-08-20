@@ -3,15 +3,20 @@ import 'package:instagram/src/bloc/profile/profile_event.dart';
 import 'package:instagram/src/bloc/profile/profile_state.dart';
 import 'package:instagram/src/repository/profile_repository.dart';
 
+import '../../repository/post_repository.dart';
+
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository profileRepository = ProfileRepository();
+  final PostRepository postRepository = PostRepository();
 
   ProfileBloc() : super(ProfileInitial()) {
     on<ProfileFetchingEvent>((event, emit) async {
       emit(ProfileLoading());
       try {
         final userModel = await profileRepository.fetchProfile(event.uid);
-        emit(ProfileLoaded(userModel: userModel));
+        final userPostsFuture = postRepository.fetchUserPosts(event.uid);
+
+        emit(ProfileLoaded(userModel: userModel ,userPosts: userPostsFuture ));
         print(userModel.toJson());
       } catch (e) {
         emit(ProfileError(message: e.toString()));

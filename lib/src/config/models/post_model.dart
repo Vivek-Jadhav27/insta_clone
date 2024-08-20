@@ -2,8 +2,9 @@ class PostModel {
   final String id;
   final String userId;
   final String username;
+  final String userProfileImageUrl;
   final String caption;
-  final String timestamp;
+  final String createAt;
   final List<dynamic> imageUrls;
   final List<dynamic> likeslist;
   final List<dynamic> commentslist;
@@ -18,7 +19,8 @@ class PostModel {
     required this.username,
     required this.caption,
     required this.imageUrls,
-    required this.timestamp,
+    required this.createAt,
+    required this.userProfileImageUrl,
     this.likeslist = const [],
     this.commentslist = const [],
     this.mentionlist = const [],
@@ -32,8 +34,9 @@ class PostModel {
       'id': id,
       'userId': userId,
       'username': username,
+      'userProfileImageUrl': userProfileImageUrl,
       'caption': caption,
-      'timestamp': timestamp,
+      'createAt': createAt,
       'imageUrls': imageUrls,
       'likeslist': likeslist,
       'commentslist': commentslist,
@@ -49,9 +52,10 @@ class PostModel {
       id: json['id'] ?? '',
       userId: json['userId'] ?? '',
       username: json['username'] ?? '',
+      userProfileImageUrl: json['userProfileImageUrl'] ?? '',
       caption: json['caption'] ?? '',
       imageUrls: json['imageUrls'] ?? [],
-      timestamp: json['timestamp'] ?? '',
+      createAt: json['createAt'] ?? '',
       likeslist: json['likeslist'] ?? [],
       commentslist: json['commentslist'] ?? [],
       mentionlist: json['mentionlist'] ?? [],

@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:instagram/src/repository/post_repository.dart';
+import '../../config/models/post_model.dart';
+import '../../widgets/home_post.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final List<PostModel> posts = [];
+  final PostRepository postRepository = PostRepository();
+
+  @override
+  void initState() {
+    super.initState();
+
+    postRepository.fetchPosts().then((value) {
+      setState(() {
+        posts.addAll(value);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,87 +56,11 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: ListView.builder(
-        itemCount: 10, // Number of posts
+        itemCount: posts.length, // Number of posts
         itemBuilder: (context, index) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ListTile(
-              //   leading: CircleAvatar(
-              //     backgroundImage: AssetImage('assets/images/user${index + 1}.jpg'), // Example profile image
-              //   ),
-              //   title: Text(
-              //     'User ${index + 1}',
-              //     style: const TextStyle(fontWeight: FontWeight.bold),
-              //   ),
-              //   trailing: IconButton(
-              //     icon: const Icon(Icons.more_vert),
-              //     onPressed: () {
-              //       // Handle action
-              //     },
-              //   ),
-              // ),
-              // Container(
-              //   height: 400, // Height of the post image
-              //   width: double.infinity,
-              //   decoration: BoxDecoration(
-              //     image: DecorationImage(
-              //       image: AssetImage('assets/images/post${index + 1}.jpg'), // Example post image
-              //       fit: BoxFit.cover,
-              //     ),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Row(
-              //     children: [
-              //       IconButton(
-              //         icon: const Icon(Icons.favorite_border),
-              //         onPressed: () {
-              //           // Handle like
-              //         },
-              //       ),
-              //       IconButton(
-              //         icon: const Icon(Icons.chat_bubble_outline),
-              //         onPressed: () {
-              //           // Handle comment
-              //         },
-              //       ),
-              //       IconButton(
-              //         icon: const Icon(Icons.send),
-              //         onPressed: () {
-              //           // Handle share
-              //         },
-              //       ),
-              //       const Spacer(),
-              //       IconButton(
-              //         icon: const Icon(Icons.bookmark_border),
-              //         onPressed: () {
-              //           // Handle save
-              //         },
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              //   child: Text(
-              //     'Liked by user${index + 1} and others',
-              //     style: const TextStyle(fontWeight: FontWeight.bold),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              //   child: Text(
-              //     'View all comments',
-              //     style: TextStyle(color: Colors.grey[600]),
-              //   ),
-              // ),
-              // const SizedBox(height: 10),
-            ],
-          );
+          return HomePost(post: posts[index]);
         },
       ),
-   );
+    );
   }
 }

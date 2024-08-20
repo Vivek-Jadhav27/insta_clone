@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import '../config/models/post_model.dart';
 
 class PostsGridView extends StatelessWidget {
-  final int itemCount;
+  final List<PostModel> posts; 
 
-  const PostsGridView({required this.itemCount});
+  const PostsGridView({required this.posts});
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +15,18 @@ class PostsGridView extends StatelessWidget {
         crossAxisSpacing: 4.0,
         mainAxisSpacing: 4.0,
       ),
+      itemCount: posts.length,
       itemBuilder: (context, index) {
+        final post = posts[index];
         return Container(
-          color: Colors.grey[300],
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(post.imageUrls[0]), // Use the image URL from the post
+              fit: BoxFit.cover,
+            ),
+          ),
         );
       },
-      itemCount: itemCount,
     );
   }
 }

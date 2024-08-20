@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../utils/permission_service.dart';
 import 'activity_page.dart';
 import 'add_page.dart';
@@ -21,7 +20,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     const HomePage(),
     const ExplorePage(),
-    const AddPage(),
+    AddPage(),
     const ActivityPage(),
     const ProfilePage(),
   ];
@@ -39,20 +38,20 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _requestAllPermissions() async {
-    final statuses = await _permissionsService.requestAllPermissions();
+     await _permissionsService.requestAllPermissions();
 
-    bool cameraGranted =
-        statuses[Permission.camera] == PermissionStatus.granted;
-    bool storageGranted =
-        statuses[Permission.storage] == PermissionStatus.granted;
+    // bool cameraGranted =
+    //     statuses[Permission.camera] == PermissionStatus.granted;
+    // bool storageGranted =
+    //     statuses[Permission.storage] == PermissionStatus.granted;
 
-    String message = 'Permissions status:\n';
-    message += 'Camera: ${cameraGranted ? "Granted" : "Denied"}\n';
-    message += 'Storage: ${storageGranted ? "Granted" : "Denied"}';
+    // String message = 'Permissions status:\n';
+    // message += 'Camera: ${cameraGranted ? "Granted" : "Denied"}\n';
+    // message += 'Storage: ${storageGranted ? "Granted" : "Denied"}';
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(content: Text(message)),
+    // );
   }
 
   @override
